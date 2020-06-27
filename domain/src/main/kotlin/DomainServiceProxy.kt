@@ -1,0 +1,2 @@
+class DomainServiceProxy: DomainService {
+}
