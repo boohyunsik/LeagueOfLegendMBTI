@@ -1,5 +1,7 @@
 import api.RiotApi
 import api.RiotService
+import exception.MatchNotFoundException
+import exception.SummonerNotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -54,5 +56,16 @@ class DomainServiceProxyTest {
     @Test fun `getMatchDetailByGameId should return valid match info`() = runBlocking {
         val match = domainService.getMatchDetailByGameId("4488936332")
         print(match)
+    }
+
+    // Exception tests
+    @Test(expected = SummonerNotFoundException::class)
+    fun `getRecentMatchBySummonerName with not existed summoner should throw SummonerNotFoundException`() = runBlocking {
+        val match = domainService.getRecentMatchBySummonerName("!@#!@#@!#!@#!@")
+    }
+
+    @Test(expected = MatchNotFoundException::class)
+    fun `getMatchDetailByGameId with not existed game id should throw MatchNotFoundException`() = runBlocking {
+        val matchDetail = domainService.getMatchDetailByGameId("aaaaa")
     }
 }

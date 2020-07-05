@@ -1,5 +1,6 @@
 package api
 
+import exception.SummonerNotFoundException
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -45,6 +46,11 @@ class RiotServiceTest {
         val summoner = riotService?.getSummonerInfo("hide on bush")
         assertEquals("Hide on bush", summoner?.name)
         print(summoner)
+    }
+
+    @Test(expected = SummonerNotFoundException::class)
+    fun `if summoner is not exist, getSummonerInfo should throw "NoSummonerException"`() = runBlocking {
+        val summoner = riotService?.getSummonerInfo("!@@!@#!@$!@#!@!")
     }
 
     @Test fun `getMatchList should return valid match list`() = runBlocking {
