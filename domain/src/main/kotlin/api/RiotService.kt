@@ -2,6 +2,8 @@ package api
 
 import exception.MatchNotFoundException
 import exception.SummonerNotFoundException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import model.Match
 import model.MatchList
 import model.Summoner
@@ -31,5 +33,9 @@ class RiotService(private val riotApi: RiotApi) {
             // TODO : Handling exception more briefly!
             throw MatchNotFoundException(matchId)
         }
+    }
+
+    fun emitMatch(matchId: String): Flow<Match> = flow {
+        emit(getMatch(matchId))
     }
 }

@@ -2,6 +2,7 @@ import api.RiotApi
 import api.RiotService
 import exception.MatchNotFoundException
 import exception.SummonerNotFoundException
+import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -56,6 +57,17 @@ class DomainServiceProxyTest {
     @Test fun `getMatchDetailByGameId should return valid match info`() = runBlocking {
         val match = domainService.getMatchDetailByGameId("4488936332")
         print(match)
+    }
+
+    @Test fun `getRecentMatches should return the same number of input parameter "numberOfMatches"`() = runBlocking {
+        val matches = domainService.getRecentMatchesBySummonerName("하위빅스비", 10)
+        assertEquals(10, matches.size)
+        print(matches)
+    }
+
+    @Test fun `getRecentMatchesDetailBySummonerName should return valid match information`() = runBlocking {
+        val matchDetail = domainService.getRecentMatchesDetailBySummonerName("하위빅스비", 2)
+        print(matchDetail)
     }
 
     // Exception tests
