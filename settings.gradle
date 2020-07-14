@@ -2,3 +2,4 @@ rootProject.name = 'lolmbti'
 
 include "application"
 include "domain"
+include "analysis"
