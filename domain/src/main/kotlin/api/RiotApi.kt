@@ -1,5 +1,6 @@
 package api
 
+import model.ChampionMastery
 import model.Match
 import model.MatchList
 import model.Summoner
@@ -15,4 +16,7 @@ interface RiotApi {
 
     @GET("/lol/match/v4/matches/{matchId}")
     suspend fun getMatch(@Path("matchId") matchId: String): Match
+
+    @GET("/lol/champion-mastery/v4/champion-masteries/by-summoner/{encryptedAccountId}")
+    suspend fun getChampionMasteryListByEncryptedAccountId(@Path("encryptedAccountId") encryptedAccountId: String): List<ChampionMastery>
 }

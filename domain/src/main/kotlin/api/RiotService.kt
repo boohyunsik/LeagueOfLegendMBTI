@@ -4,6 +4,7 @@ import exception.MatchNotFoundException
 import exception.SummonerNotFoundException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import model.ChampionMastery
 import model.Match
 import model.MatchList
 import model.Summoner
@@ -35,7 +36,7 @@ class RiotService(private val riotApi: RiotApi) {
         }
     }
 
-    fun emitMatch(matchId: String): Flow<Match> = flow {
-        emit(getMatch(matchId))
+    suspend fun getChampionMasteryListByEncryptedAccountId(encryptionId: String): List<ChampionMastery> {
+        return riotApi.getChampionMasteryListByEncryptedAccountId(encryptionId)
     }
 }

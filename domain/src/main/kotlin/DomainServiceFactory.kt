@@ -1,3 +1,5 @@
+import api.DataDragonApi
+import api.DataDragonService
 import api.RiotApi
 import api.RiotService
 import okhttp3.OkHttpClient
@@ -21,6 +23,12 @@ object DomainServiceFactory {
             .build()
             .create(RiotApi::class.java)
 
-        return DomainServiceProxy(RiotService(riotApi))
+        val dataDragonApi = Retrofit.Builder()
+            .baseUrl("https://ddragon.leagueoflegends.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(DataDragonApi::class.java)
+
+        return DomainServiceProxy(RiotService(riotApi), DataDragonService(dataDragonApi))
     }
 }

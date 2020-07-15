@@ -1,8 +1,10 @@
 package champion
 
-class ChampionAnalyser {
+import DomainService
 
-    fun getMostChampion(summonerName: String) {
-
+class ChampionAnalyser(private val domainService: DomainService) {
+    suspend fun getMostChampion(summonerName: String) {
+        val summonerInfo = domainService.getSummonerInfoByName(summonerName)
+        val championMasteryList = domainService.getChampionMasteryListByEncryptedId(summonerInfo.accountId)
     }
 }

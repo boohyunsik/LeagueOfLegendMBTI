@@ -1,8 +1,7 @@
+import api.DataDragonApi
+import api.DataDragonService
 import api.RiotApi
 import api.RiotService
-import exception.MatchNotFoundException
-import exception.SummonerNotFoundException
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -22,7 +21,8 @@ class DomainServiceProxyTest {
     private val testDispatcher = TestCoroutineDispatcher()
     private val testScope = TestCoroutineScope(testDispatcher)
 
-    @Before fun setup() {
+    @Before
+    fun setup() {
         Dispatchers.setMain(testDispatcher)
 
         val client = OkHttpClient.Builder().addNetworkInterceptor {
@@ -39,8 +39,15 @@ class DomainServiceProxyTest {
             .build()
             .create(RiotApi::class.java)
 
+        val dataDragonApi = Retrofit.Builder()
+            .baseUrl("https://ddragon.leagueoflegends.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(DataDragonApi::class.java)
+
         val riotService = RiotService(riotApi)
-        domainService = DomainServiceProxy(riotService)
+        val dataDragonService = DataDragonService(dataDragonApi)
+        domainService = DomainServiceProxy(riotService, dataDragonService)
     }
 
     @After
@@ -49,35 +56,23 @@ class DomainServiceProxyTest {
         testScope.cleanupTestCoroutines()
     }
 
-    @Test fun `getRecentMatchBySummonerName should return valid match info`() = runBlocking {
-        val match = domainService.getRecentMatchBySummonerName("하위빅스비")
-        print(match)
+    @Test
+    fun `getChampionMasteryListByEncryptedId should return valid info`() = runBlocking {
+        val summonerInfo = domainService.getSummonerInfoByName("하위빅스비")
+        val masteryList = domainService.getChampionMasteryListByEncryptedId(summonerInfo.id)
+        print(masteryList)
     }
 
-    @Test fun `getMatchDetailByGameId should return valid match info`() = runBlocking {
-        val match = domainService.getMatchDetailByGameId("4488936332")
-        print(match)
+    @Test
+    fun `what getVersion return`() = runBlocking {
+        val version = domainService.getCurrentPatchVersion()
+        print(version)
     }
 
-    @Test fun `getRecentMatches should return the same number of input parameter "numberOfMatches"`() = runBlocking {
-        val matches = domainService.getRecentMatchesBySummonerName("하위빅스비", 10)
-        assertEquals(10, matches.size)
-        print(matches)
-    }
-
-    @Test fun `getRecentMatchesDetailBySummonerName should return valid match information`() = runBlocking {
-        val matchDetail = domainService.getRecentMatchesDetailBySummonerName("하위빅스비", 2)
-        print(matchDetail)
-    }
-
-    // Exception tests
-    @Test(expected = SummonerNotFoundException::class)
-    fun `getRecentMatchBySummonerName with not existed summoner should throw SummonerNotFoundException`() = runBlocking {
-        val match = domainService.getRecentMatchBySummonerName("!@#!@#@!#!@#!@")
-    }
-
-    @Test(expected = MatchNotFoundException::class)
-    fun `getMatchDetailByGameId with not existed game id should throw MatchNotFoundException`() = runBlocking {
-        val matchDetail = domainService.getMatchDetailByGameId("aaaaa")
+    @Test
+    fun `what getChampionInfo return`() = runBlocking {
+        val version = domainService.getCurrentPatchVersion()
+        val championInfo = domainService.getChampionKoreanInfo(version, "Aatrox")
+        print(championInfo)
     }
 }
